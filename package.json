@@ -1,0 +1,15 @@
+{
+  "name": "opencde-api-server",
+  "version": "1.0.0",
+  "description": "The OpenCDE-API Server implementation in JavaScript.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "opencde",
+    "api"
+  ],
+  "author": "Jyrki Oraskari",
+  "license": "MIT"
+}
