@@ -1,6 +1,7 @@
 # OpenCDE-API
 
 npm install
+
 npm start
 
 
