@@ -1,79 +1,62 @@
-import express from 'express';
+import * as express from "express";
 import * as http from 'http';
-import * as bodyparser from 'body-parser';
+import * as bodyParser from "body-parser";
+import swaggerUi = require('swagger-ui-express');
 
-import * as winston from 'winston';
-import * as expressWinston from 'express-winston';
+
 import cors from 'cors';
-import {CommonRoutesConfig} from './common/common.routes.config';
-import {OpenCDEAPIUploadRoutes} from './cde/cde.upload.routes.config';
-import {OpenCDEAPIDownloadRoutes} from './cde/cde.download.routes.config';
-import debug from 'debug';
+import fs = require('fs');
 
-//import swaggerJSDocs from 'swagger-jsdoc';
+import Routes from "./opencde-api/routes";
 
-const app: express.Application = express();
-const server: http.Server = http.createServer(app);
-const port: Number = 3000;
-const routes: Array<CommonRoutesConfig> = [];
-const debugLog: debug.IDebugger = debug('app');
+class OpenCDEAPI {
+    public app: express.Application;
+    /* Swagger files start */
+    private swaggerFile: any =(process.cwd()+"/swagger/openapi.json-Swagger20.json");
+    private swaggerData: any = fs.readFileSync(this.swaggerFile, 'utf8');
+    private swaggerDocument = JSON.parse(this.swaggerData);
 
+    constructor() {
+        this.app = express.default();
+        this.middleware();
+        this.configure_routes();
 
-// middleware to parse all incoming requests as JSON
-app.use(bodyparser.json());
+        const server: http.Server = http.createServer(this.app);
+        const port: Number = 3000;
 
-// middleware to allow cross-origin requests
-app.use(cors());
+        server.listen(port, () => {
 
-const router = require('express').Router();
-const swaggerUi = require('swagger-ui-express');
-/*const options = {
-    definition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'OpenCDE-API',
-            version: '1.0.0',
-        },
-    },
-    apis: ['./*.js'], // files containing annotations as above
-};
-const swaggerDocument = swaggerJSDocs(options);
+        });
+    }
 
-router.use('/api-docs', swaggerUi.serve);
+    private middleware(): void {
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: false }));
 
- */
-//router.get('/api-docs', swaggerUi.setup(swaggerDocument));
+        // middleware to allow cross-origin requests
+        this.app.use(cors());
+    }
 
-app.use(expressWinston.logger({
-    transports: [
-        new winston.transports.Console()
-    ],
-    format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.json()
-    )
-}));
+    private configure_routes(): void {
 
-routes.push(new OpenCDEAPIUploadRoutes(app));
-routes.push(new OpenCDEAPIDownloadRoutes(app));
+        // @ts-ignore
+        this.app.get("/", (req, res, next) => {
+            res.send("API Works!!!!!");
+        });
 
-app.use(expressWinston.errorLogger({
-    transports: [
-        new winston.transports.Console()
-    ],
-    format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.json()
-    )
-}));
+        // user route
+        this.app.use("/api", Routes);
 
-app.get('/', (req: express.Request, res: express.Response) => {
-    res.status(200).send(`Server up and running!`)
-});
+        // swagger docs
+        this.app.use('/api/docs', swaggerUi.serve,
+            swaggerUi.setup(this.swaggerDocument));
 
-server.listen(port, () => {
-    debugLog(`Server running at http://localhost:${port}`);
-    routes.forEach((route: CommonRoutesConfig) => {
-        debugLog(`Routes configured for ${route.getName()}`);
-    });
-});
+        // handle undefined routes
+        this.app.use("*", (req, res, next) => {
+            res.send("Make sure url is correct!");
+        });
+    }
+
+}
+
+new OpenCDEAPI();

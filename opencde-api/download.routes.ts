@@ -1,22 +1,17 @@
-import {CommonRoutesConfig} from '../common/common.routes.config';
-// @ts-ignore
-import express from 'express';
+import * as express from "express";
 
-export class OpenCDEAPIDownloadRoutes extends CommonRoutesConfig {
-    constructor(app: express.Application) {
-        super(app, 'OpenCDE-API Download Routes');
+const randomId = require("random-id");
+
+export class OpenCDEAPIDownloadRoutes{
+    public app: express.Application;
+
+    constructor() {
+        this.app = express.default();
+        this.configure_routes();
     }
-	
-	configureRoutes() {
-        /**
-         * @openapi
-         * /:
-         *   /select-documents:
-         *     description: !
-         *     responses:
-         *       200:
-         *         description: Returns a user interface.
-         */
+
+    configure_routes() {
+
 		this.app.route(`/select-documents`)
             .all((req: express.Request, res: express.Response, next: express.NextFunction) => {
                 next();
@@ -53,3 +48,5 @@ export class OpenCDEAPIDownloadRoutes extends CommonRoutesConfig {
         return this.app;
     }
 }
+
+export default new OpenCDEAPIDownloadRoutes().app;
