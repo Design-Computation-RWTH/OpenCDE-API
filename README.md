@@ -1,8 +1,15 @@
 # OpenCDE-API
 
+
+## Install the server:
+
 npm install
 
-npm start
+## Run the server
+npm run start
 
 
-http://localhost:3000/select-documents
+## OpenAPI Documentation
+
+http://localhost:3000/api/docs/
+
