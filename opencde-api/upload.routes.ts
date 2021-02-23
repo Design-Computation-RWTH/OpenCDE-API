@@ -37,10 +37,10 @@ export class OpenCDEAPIUploadRoutes{
                 _links: {
                     'register-file-upload': {
                         // http is used in the dev environment. Should be replaced with https in production
-                        href: "http://"+req.headers.host+"/cde/0.1/register-file-upload/"+sessionId
+                        href: "http://"+req.headers.host+"/cde/0.1/documents/register-file-upload/"+sessionId
                     },
                     'upload-metadata': {
-                        href: "http://"+req.headers.host+"/cde/0.1/upload-metadata/?upload_session_id="+sessionId
+                        href: "http://"+req.headers.host+"/cde/0.1/documents/upload-metadata/?upload_session_id="+sessionId
                     }
                 }
             };
@@ -56,7 +56,7 @@ export class OpenCDEAPIUploadRoutes{
             registerfile_response={
                 "_links": {
                     "upload-file": {
-                        "href": "https://server/documents-api/upload-session/"+sessionId+"/files/"+documentId
+                        href: "http://"+req.headers.host+"/documents-api/upload-session/"+sessionId+"/files/"+documentId
                     }
                 }
             };
@@ -88,16 +88,16 @@ export class OpenCDEAPIUploadRoutes{
             document_reference={
                 "_links": {
                     "self": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     },
                     "metadata": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     },
                     "versions": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     },
                     "content": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     }
                 },
                 "version": "string",

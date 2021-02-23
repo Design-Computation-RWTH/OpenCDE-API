@@ -1,13 +1,13 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "0.1",
+    "version": "0.1.1",
     "title": "OpenCDE document API",
-    "description": "Proposals for OpenCDE document API",
+    "description": "Based on https://github.com/buildingSMART/OpenCDE-API",
     "contact": {
-      "email": "dirk.harbinson@oracle.com",
-      "name": "Dirk Harbinson",
-      "url": "https://github.com/buildingSMART/OpenCDE-API"
+      "email": "Jyrki.Oraskari@dc.rwth-aachen.de",
+      "name": "Jyrki Oraskari",
+      "url": "https://github.com/jyrkioraskari/OpenCDE-API"
     }
   },
   "basePath": "/",
@@ -90,7 +90,7 @@
         }
       }
     },
-    "/<register-file-upload-link>": {
+    "/cde/0.1/documents/register-file-upload/{session_id}": {
       "post": {
         "description": "Register a file to upload",
         "summary": "Register a file to upload",
@@ -106,6 +106,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "description": "Session Id",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -274,7 +281,7 @@
       "properties": {
         "href": {
           "description": "The link to the resource (URL). Must be a fully qualified URL with scheme, host and path",
-          "example": "https://bim.aconex.com/link/to/resource",
+          "example": "http://localhost:3000/link/to/resource",
           "type": "string"
         }
       },
@@ -288,7 +295,7 @@
       "properties": {
         "href": {
           "description": "The link to the resource (URL). Must be a fully qualified URL with scheme, host and path",
-          "example": "https://bim.aconex.com/link/to/resource",
+          "example": "http://localhost:3000/link/to/resource",
           "type": "string"
         }
       },
@@ -302,7 +309,7 @@
       "properties": {
         "href": {
           "description": "The link to the resource (URL). Must be a fully qualified URL with scheme, host and path",
-          "example": "https://bim.aconex.com/link/to/resource",
+          "example": "http://localhost:3000/link/to/resource",
           "type": "string"
         }
       },
@@ -316,7 +323,7 @@
       "properties": {
         "href": {
           "description": "The link to the resource (URL). Must be a fully qualified URL with scheme, host and path",
-          "example": "https://bim.aconex.com/link/to/resource",
+          "example": "http://localhost:3000/link/to/resource",
           "type": "string"
         }
       },
@@ -330,7 +337,7 @@
       "properties": {
         "href": {
           "description": "The link to the resource (URL). Must be a fully qualified URL with scheme, host and path",
-          "example": "https://bim.aconex.com/link/to/resource",
+          "example": "http://localhost:3000/link/to/resource",
           "type": "string"
         }
       },
@@ -576,7 +583,7 @@
       "type": "object",
       "properties": {
         "href": {
-          "example": "https://bim.aconex.com/documents-api/upload-session/ecb02b2e-a050-41e9-80a8-f247ab1f317e/files",
+          "example": "https://localhost:3000/documents-api/upload-session/ecb02b2e-a050-41e9-80a8-f247ab1f317e/files",
           "type": "string"
         }
       }
@@ -608,7 +615,7 @@
       "type": "object",
       "properties": {
         "href": {
-          "example": "https://bim.aconex.com/documents-api/upload-session/57a5f29d-3b72-4c38-b0cd-ba843ee45d52/files/7bb1f522-fd85-488f-b005-e407cc1a78a6",
+          "example": "http://localhost:3000/documents-api/upload-session/57a5f29d-3b72-4c38-b0cd-ba843ee45d52/files/7bb1f522-fd85-488f-b005-e407cc1a78a6",
           "type": "string"
         }
       }
@@ -619,7 +626,7 @@
       "type": "object",
       "properties": {
         "href": {
-          "example": "https://bim.aconex.com/cde/0.1/documents/upload-metadata/?upload_session_id=ecb02b2e-a050-41e9-80a8-f247ab1f317e",
+          "example": "http://localhost:3000/cde/0.1/documents/upload-metadata/?upload_session_id=ecb02b2e-a050-41e9-80a8-f247ab1f317e",
           "type": "string"
         }
       }

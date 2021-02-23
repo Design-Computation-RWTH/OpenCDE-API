@@ -29,16 +29,16 @@ export class OpenCDEAPIDownloadRoutes{
             document_reference={
                 "_links": {
                     "self": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     },
                     "metadata": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     },
                     "versions": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     },
                     "content": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     }
                 },
                 "version": "string",
@@ -61,10 +61,10 @@ export class OpenCDEAPIDownloadRoutes{
             document_metadata={
                 "_links": {
                     "self": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     },
                     "documentReference": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+"/link/to/resource"
                     }
                 },
                 "_metaData": [
@@ -90,7 +90,7 @@ export class OpenCDEAPIDownloadRoutes{
             document_reference_list={
                 "_links": {
                     "self": {
-                        "href": "https://bim.aconex.com/link/to/resource"
+                        href: "http://"+req.headers.host+":3000/link/to/resource"
                     }
                 },
                 "_embedded": {
@@ -98,16 +98,16 @@ export class OpenCDEAPIDownloadRoutes{
                         {
                             "_links": {
                                 "self": {
-                                    "href": "https://bim.aconex.com/link/to/resource"
+                                    href: "http://"+req.headers.host+"/link/to/resource"
                                 },
                                 "metadata": {
-                                    "href": "https://bim.aconex.com/link/to/resource"
+                                    href: "http://"+req.headers.host+"/link/to/resource"
                                 },
                                 "versions": {
-                                    "href": "https://bim.aconex.com/link/to/resource"
+                                    href: "http://"+req.headers.host+"/link/to/resource"
                                 },
                                 "content": {
-                                    "href": "https://bim.aconex.com/link/to/resource"
+                                    href: "http://"+req.headers.host+"/link/to/resource"
                                 }
                             },
                             "version": "string",
