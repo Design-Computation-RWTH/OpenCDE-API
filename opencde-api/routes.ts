@@ -14,8 +14,8 @@ class Routes {
     private configure_routes(): void {
 
         // user route
-        this.app.use("/", OpenCDEAPIUploadRoutes);
-        this.app.use("/", OpenCDEAPIDownloadRoutes);
+        this.app.use("/documents", OpenCDEAPIUploadRoutes);
+        this.app.use("/documents", OpenCDEAPIDownloadRoutes);
 
     }
 }

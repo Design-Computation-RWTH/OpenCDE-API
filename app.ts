@@ -45,10 +45,10 @@ class OpenCDEAPI {
         });
 
         // user route
-        this.app.use("/api", Routes);
+        this.app.use("/cde/0.1", Routes);
 
         // swagger docs
-        this.app.use('/api/docs', swaggerUi.serve,
+        this.app.use('/cde/0.1/docs', swaggerUi.serve,
             swaggerUi.setup(this.swaggerDocument));
 
         // handle undefined routes

@@ -3,10 +3,10 @@ import * as upload_types from "./upload.types";
 import * as common_types from "./common.types";
 
 
-const randomId = require("random-id");
 const busboy = require('connect-busboy'); //middleware for form/file upload
 const path = require('path');     //used for file path
 const fs = require('fs-extra');       //File System - for file manipulation
+
 
 export class OpenCDEAPIUploadRoutes{
     public app: express.Application;
@@ -19,19 +19,28 @@ export class OpenCDEAPIUploadRoutes{
 
     }
 
+    uuidv4() {
+        //ES6 crypto API could be used instead
+        // https://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    };
 
     configure_routes() {
 
         this.app.post("/upload-documents", (req, res) => {
             let session_response:upload_types.UploadSessionCreatedResponse;
-            let sessionId=randomId(10);
+            let sessionId=this.uuidv4();
             session_response={
                 _links: {
                     'register-file-upload': {
-                        href: "https://server/cde/0.1/register-file-upload/"+sessionId
+                        // http is used in the dev environment. Should be replaced with https in production
+                        href: "http://"+req.headers.host+"/cde/0.1/register-file-upload/"+sessionId
                     },
                     'upload-metadata': {
-                        href: 'https://server/cde/0.1/upload-metadata/?upload_session_id='+sessionId
+                        href: "http://"+req.headers.host+"/cde/0.1/upload-metadata/?upload_session_id="+sessionId
                     }
                 }
             };
@@ -40,7 +49,7 @@ export class OpenCDEAPIUploadRoutes{
 
         this.app.post("/register-file-upload/:session_id", (req, res) => {
             let registerfile_response:upload_types.RegisterFileResponse;
-            let documentId=randomId(10);
+            let documentId=this.uuidv4();
             let sessionId:string;
             sessionId=req.params.session_id;
             let file_request: upload_types.UploadSessionCreatedResponse = req.body;

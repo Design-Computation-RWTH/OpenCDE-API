@@ -11,5 +11,5 @@ npm run start
 
 ## OpenAPI Documentation
 
-http://localhost:3000/api/docs/
+http://localhost:3000/cde/0.1/docs/
 
