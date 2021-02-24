@@ -14,7 +14,7 @@ const mkdirp = require('mkdirp')
 
 export class OpenCDEAPIUploadRoutes{
     public app: express.Application;
-    private  documents:Documentbase;
+    private readonly documents:Documentbase;
 
     constructor() {
         this.app =express.default();
@@ -80,13 +80,13 @@ export class OpenCDEAPIUploadRoutes{
 
             let db_file_request:any=
                 {
-                    _id:file_version_uuidHash,
+                    _id:"file_request:"+file_version_uuidHash,
                     file_request:file_request
                 }
 
             this.documents.db.put(db_file_request, function(err: any, response: any) {
                 if (err) {
-                    return console.log(err);
+                    console.log("File reference version exists already in db");
                 } else {
                     console.log("Document created Successfully");
                 }
@@ -94,7 +94,7 @@ export class OpenCDEAPIUploadRoutes{
             registerfile_response={
                 "_links": {
                     "upload-file": {
-                        href: "http://"+req.headers.host+"/documents/upload-session/"+sessionId+"/files/"+file_version_uuidHash
+                        href: "http://"+req.headers.host+"/cde/0.1/documents/upload-session/"+sessionId+"/files/"+file_version_uuidHash
                     }
                 }
             };
@@ -114,8 +114,8 @@ export class OpenCDEAPIUploadRoutes{
             file_name_uuidHash= sessionstorage.getItem(sessionId);
 
             let db_file_request:any;
-            this.documents.db.get(file_version_uuidHash).then(function (doc:any) {
-                db_file_request=doc;
+            let documents:Documentbase=this.documents;
+            this.documents.db.get("file_request:"+file_version_uuidHash).then(function (db_file_request:any) {
                 console.log("DB db_file_request 1 " + db_file_request);
                 console.log("DB db_file_request 2 " + db_file_request.file_request.size);
                 let fstream;
@@ -131,8 +131,6 @@ export class OpenCDEAPIUploadRoutes{
                         console.log("Upload Finished of " + filename);
                     });
                 });
-
-
 
                 let document_reference:common_types.DocumentReference;
                 document_reference={
@@ -158,44 +156,28 @@ export class OpenCDEAPIUploadRoutes{
                         "name": db_file_request.file_request.filename
                     }
                 };
+                console.log("Document reference to be saved");
+                let db_document_reference:any=
+                    {
+                        _id:"document_reference:"+file_version_uuidHash,
+                        document_reference:document_reference
+                    }
+                documents.db.put(db_document_reference, function(err: any, response: any) {
+                    if (err) {
+                        //return console.log(err);
+                        console.log("Document reference version exists already in db");
+                    } else {
+                        console.log("Document reference saved successfully");
+                    }
+                });
+
+                console.log("Document reference was:"+ document_reference);
                 res.json(document_reference);
 
-            })
-
-        });
-
-
-        // Upload file
-        this.app.post("/upload-test", (req, res) => {
-
-
-            let fstream;
-            // @ts-ignore
-            req.pipe(req.busboy);
-            // @ts-ignore
-            req.busboy.on('file', function (fieldname: any, file: { pipe: (arg0: any) => void; }, filename: string) {
-                console.log("Uploading: " + filename);
-                //Path where image will be uploaded
-                fstream = fs.createWriteStream(process.cwd()+'/documents/files/' + filename);
-                file.pipe(fstream);
-                fstream.on('close', function () {
-                    console.log("Upload Finished of " + filename);
-                });
+            }).catch(function () {
+                // handle any errors
             });
 
-
-
-            let document_reference:any;
-            document_reference={
-                "version": "string",
-                "version_date": "string",
-                "title": "string",
-                "file_description": {
-                    "size_in_bytes": 0,
-                    "name": "string"
-                }
-            };
-            res.json(document_reference);
         });
 
         return this.app;

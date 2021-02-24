@@ -162,7 +162,7 @@
           {
             "name": "documentversion_id",
             "in": "path",
-            "description": "Session Id",
+            "description": "Document version Id",
             "required": true,
             "type": "string"
           },
@@ -186,43 +186,7 @@
         }
       }
     },
-    "/cde/0.1/documents/upload-test": {
-      "post": {
-        "description": "Upload a file",
-        "summary": "Upload a file",
-        "tags": [
-          "Upload - Vendor specific URL (discovered via standard API)"
-        ],
-        "operationId": "Uploadafile2",
-        "deprecated": false,
-        "produces": [
-          "application/hal+json"
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "parameters": [
-          {
-            "name": "file",
-            "in": "formData",
-            "required": false,
-            "type": "file",
-            "format": "file",
-            "description": ""
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns the links to upload file binary",
-            "schema": {
-              "$ref": "#/definitions/DocumentReference"
-            },
-            "headers": {}
-          }
-        }
-      }
-    },
-    "/<document-reference-link>": {
+    "/cde/0.1/documents/document_reference/{documentversion_id}": {
       "get": {
         "description": "Get document reference",
         "summary": "getDocumentReference",
@@ -234,7 +198,15 @@
         "produces": [
           "application/hal+json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "documentversion_id",
+            "in": "path",
+            "description": "Document version Id",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "The document reference payload",
@@ -246,7 +218,7 @@
         }
       }
     },
-    "/<document-version-metadata-link>": {
+    "/cde/0.1/documents/document-version-metadata/{documentversion_id}": {
       "get": {
         "description": "Get document version metadata",
         "summary": "getDocumentMetadata",
@@ -258,7 +230,15 @@
         "produces": [
           "application/hal+json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "documentversion_id",
+            "in": "path",
+            "description": "Document version Id",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "The document metadata",
@@ -270,7 +250,7 @@
         }
       }
     },
-    "/<document-versions-link>": {
+    "/cde/0.1/documents/document-versions/{document_id}": {
       "get": {
         "description": "Get all versions of a document",
         "summary": "getDocumentVersions",
@@ -282,7 +262,15 @@
         "produces": [
           "application/hal+json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "document_id",
+            "in": "path",
+            "description": "Document Id",
+            "required": true,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "The file references of all available document versions, in ascending version order",

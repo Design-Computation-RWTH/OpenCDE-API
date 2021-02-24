@@ -10,7 +10,6 @@ import Routes from "./opencde-api/routes";
 
 class OpenCDEAPI {
     public app: express.Application;
-    /* Swagger files start */
     private swaggerFile: any =(process.cwd()+"/swagger/openapi.json-Swagger20.json");
     private swaggerData: any = fs.readFileSync(this.swaggerFile, 'utf8');
     private swaggerDocument = JSON.parse(this.swaggerData);

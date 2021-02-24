@@ -6,7 +6,7 @@ import {Documentbase} from "./documentbase"
 
 export class OpenCDEAPIDownloadRoutes{
     public app: express.Application;
-    private  documents:Documentbase;
+    private readonly documents:Documentbase;
 
     constructor() {
         this.app = express.default();
@@ -26,40 +26,27 @@ export class OpenCDEAPIDownloadRoutes{
 
 
         this.app.get("/document_reference/:documentversion_id", (req, res) => {
-            let document_id:string;
-            document_id=req.params.document_id;
+            let file_version_uuidHash:string;
+            file_version_uuidHash=req.params.documentversion_id;
+            console.log("Download: Document version  was:"+ file_version_uuidHash);
 
-            let document_reference:common_types.DocumentReference;
-            document_reference={
-                "_links": {
-                    "self": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
-                    },
-                    "metadata": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
-                    },
-                    "versions": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
-                    },
-                    "content": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
-                    }
-                },
-                "version": "string",
-                "version_date": "string",
-                "title": "string",
-                "file_description": {
-                    "size_in_bytes": 0,
-                    "name": "string"
-                }
-            };
-            res.json(document_reference);
+
+            this.documents.db.get("document_reference:"+file_version_uuidHash).then(function (db_document_reference:any) {
+                let document_reference:common_types.DocumentReference=db_document_reference.document_reference;
+                console.log("Download: DB Document reference  was:"+ db_document_reference);
+                console.log("Download: Document reference  was:"+ document_reference);
+                res.json(document_reference);
+            }).catch(function () {
+                // handle any errors
+            });
+            console.log("Download: Document reference done.");
+
         });
 
 
         this.app.get("/document-version-metadata/:documentversion_id", (req, res) => {
-            let documentversion_id:string;
-            documentversion_id=req.params.documentversion_id;
+            let file_version_uuidHash:string;
+            file_version_uuidHash=req.params.documentversion_id;
 
             let document_metadata:common_types.DocumentMetadata;
             document_metadata={
