@@ -138,16 +138,16 @@ export class OpenCDEAPIUploadRoutes{
                 document_reference={
                     "_links": {
                         "self": {
-                            href: "http://"+req.headers.host+"/document_reference/"+file_version_uuidHash
+                            href: "http://"+req.headers.host+"/cde/0.1/documents/document_reference/"+file_version_uuidHash
                         },
                         "metadata": {
-                            href: "http://"+req.headers.host+"/document-version-metadata/"+file_version_uuidHash
+                            href: "http://"+req.headers.host+"/cde/0.1/documents/document-version-metadata/"+file_version_uuidHash
                         },
                         "versions": {
-                            href: "http://"+req.headers.host+"/document-versions/"+file_name_uuidHash
+                            href: "http://"+req.headers.host+"/cde/0.1/documents/document-versions/"+file_name_uuidHash
                         },
                         "content": {
-                            href: "http://"+req.headers.host+"/content/"+file_version_uuidHash
+                            href: "http://"+req.headers.host+"/cde/0.1/documents/content/"+file_version_uuidHash
                         }
                     },
                     "version": db_file_request.file_request.version,
@@ -200,6 +200,7 @@ export class OpenCDEAPIUploadRoutes{
 
         return this.app;
     }
+
 }
 
 export default new OpenCDEAPIUploadRoutes().app;

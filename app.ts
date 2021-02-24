@@ -49,6 +49,7 @@ class OpenCDEAPI {
         // swagger docs
         this.app.use('/cde/0.1/docs', swaggerUi.serve,
             swaggerUi.setup(this.swaggerDocument));
+        this.app.use('/cde/0.1/documents/content',express.static(process.cwd()+'/documents/files'))
 
         // handle undefined routes
         this.app.use("*", (req, res, next) => {
