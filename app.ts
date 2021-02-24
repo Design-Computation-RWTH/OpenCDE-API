@@ -3,7 +3,6 @@ import * as http from 'http';
 import * as bodyParser from "body-parser";
 import swaggerUi = require('swagger-ui-express');
 
-
 import cors from 'cors';
 import fs = require('fs');
 

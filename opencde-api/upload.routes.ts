@@ -2,21 +2,25 @@ import * as express from "express";
 import * as upload_types from "./upload.types";
 import * as common_types from "./common.types";
 
-
+import {Documentbase} from "./documentbase"
 const busboy = require('connect-busboy'); //middleware for form/file upload
 const path = require('path');     //used for file path
 const fs = require('fs-extra');       //File System - for file manipulation
 
+const getUuid = require('uuid-by-string')
+
+let sessionstorage = require('sessionstorage');
 
 export class OpenCDEAPIUploadRoutes{
     public app: express.Application;
+    private  documents:Documentbase;
 
     constructor() {
         this.app =express.default();
         this.app.use(busboy());
         this.app.use(express.static(path.join(__dirname, 'public')));
         this.configure_routes();
-
+        this.documents=Documentbase.getInstance();
     }
 
     uuidv4() {
@@ -33,6 +37,15 @@ export class OpenCDEAPIUploadRoutes{
         this.app.post("/upload-documents", (req, res) => {
             let session_response:upload_types.UploadSessionCreatedResponse;
             let sessionId=this.uuidv4();
+
+            const session_context = {
+                _id: sessionId,
+                file_metadata: [],
+                file_description: []
+            };
+
+            this.documents.db.put(session_context)
+
             session_response={
                 _links: {
                     'register-file-upload': {
@@ -49,14 +62,23 @@ export class OpenCDEAPIUploadRoutes{
 
         this.app.post("/register-file-upload/:session_id", (req, res) => {
             let registerfile_response:upload_types.RegisterFileResponse;
-            let documentId=this.uuidv4();
+            //let documentVersionId=this.uuidv4();
             let sessionId:string;
             sessionId=req.params.session_id;
-            let file_request: upload_types.UploadSessionCreatedResponse = req.body;
+
+            let file_request: upload_types.RegisterFileRequest= req.body;
+            const file_name_uuidHash = getUuid(file_request.filename)
+            const file_version_uuidHash = getUuid(file_request.filename+":"+file_request.version)
+
+
+
+            sessionstorage.setItem(sessionId,file_name_uuidHash);
+
+            this.documents.db.put(file_request)
             registerfile_response={
                 "_links": {
                     "upload-file": {
-                        href: "http://"+req.headers.host+"/documents-api/upload-session/"+sessionId+"/files/"+documentId
+                        href: "http://"+req.headers.host+"/documents/upload-session/"+sessionId+"/files/"+file_version_uuidHash
                     }
                 }
             };
@@ -64,7 +86,18 @@ export class OpenCDEAPIUploadRoutes{
         });
 
         // Upload file
-        this.app.post("/upload-session/:sessionId/files/:document_id", (req, res) => {
+        this.app.post("/upload-session/:session_id/files/:documentversion_id", (req, res) => {
+            let sessionId:string;
+            sessionId=req.params.session_id;
+
+            let file_version_uuidHash:string;
+            file_version_uuidHash=req.params.documentversion_id;
+
+
+            let file_name_uuidHash:string;
+            file_name_uuidHash= sessionstorage.getItem(sessionId);
+
+
 
             let fstream;
             // @ts-ignore
@@ -88,16 +121,16 @@ export class OpenCDEAPIUploadRoutes{
             document_reference={
                 "_links": {
                     "self": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
+                        href: "http://"+req.headers.host+"/document_reference/"+file_version_uuidHash
                     },
                     "metadata": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
+                        href: "http://"+req.headers.host+"/document-version-metadata/"+file_version_uuidHash
                     },
                     "versions": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
+                        href: "http://"+req.headers.host+"/document-versions/"+file_name_uuidHash
                     },
                     "content": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
+                        href: "http://"+req.headers.host+"/content/"+file_version_uuidHash
                     }
                 },
                 "version": "string",

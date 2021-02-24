@@ -1,13 +1,17 @@
 import * as express from "express";
 import * as common_types from "./common.types";
+import {Documentbase} from "./documentbase"
+
 
 
 export class OpenCDEAPIDownloadRoutes{
     public app: express.Application;
+    private  documents:Documentbase;
 
     constructor() {
         this.app = express.default();
         this.configure_routes();
+        this.documents=Documentbase.getInstance();
     }
 
     configure_routes() {
@@ -21,7 +25,7 @@ export class OpenCDEAPIDownloadRoutes{
         });
 
 
-        this.app.get("/document_reference/:document_id", (req, res) => {
+        this.app.get("/document_reference/:documentversion_id", (req, res) => {
             let document_id:string;
             document_id=req.params.document_id;
 
@@ -53,9 +57,9 @@ export class OpenCDEAPIDownloadRoutes{
         });
 
 
-        this.app.get("/document-version-metadata-link/:document_id", (req, res) => {
-            let document_id:string;
-            document_id=req.params.document_id;
+        this.app.get("/document-version-metadata/:documentversion_id", (req, res) => {
+            let documentversion_id:string;
+            documentversion_id=req.params.documentversion_id;
 
             let document_metadata:common_types.DocumentMetadata;
             document_metadata={
@@ -84,7 +88,7 @@ export class OpenCDEAPIDownloadRoutes{
             res.json(document_metadata);
         });
 
-        this.app.get("/document-versions", (req, res) => {
+        this.app.get("/document-versions/:document_id", (req, res) => {
 
             let document_reference_list:common_types.DocumentReferenceList;
             document_reference_list={
