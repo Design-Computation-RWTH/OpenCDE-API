@@ -134,7 +134,7 @@
         }
       }
     },
-    "/<upload-file-link>": {
+    "/cde/0.1/documents/upload-session/{session_id}/files/{documentversion_id}": {
       "post": {
         "description": "Upload a file",
         "summary": "Upload a file",
@@ -142,6 +142,56 @@
           "Upload - Vendor specific URL (discovered via standard API)"
         ],
         "operationId": "Uploadafile",
+        "deprecated": false,
+        "produces": [
+          "application/hal+json"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "description": "Session Id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "documentversion_id",
+            "in": "path",
+            "description": "Session Id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "file",
+            "in": "formData",
+            "required": false,
+            "type": "file",
+            "format": "file",
+            "description": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the links to upload file binary",
+            "schema": {
+              "$ref": "#/definitions/DocumentReference"
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/cde/0.1/documents/upload-test": {
+      "post": {
+        "description": "Upload a file",
+        "summary": "Upload a file",
+        "tags": [
+          "Upload - Vendor specific URL (discovered via standard API)"
+        ],
+        "operationId": "Uploadafile2",
         "deprecated": false,
         "produces": [
           "application/hal+json"

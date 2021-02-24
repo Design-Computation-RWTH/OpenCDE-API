@@ -10,6 +10,7 @@ const fs = require('fs-extra');       //File System - for file manipulation
 const getUuid = require('uuid-by-string')
 
 let sessionstorage = require('sessionstorage');
+const mkdirp = require('mkdirp-promise')
 
 export class OpenCDEAPIUploadRoutes{
     public app: express.Application;
@@ -33,6 +34,9 @@ export class OpenCDEAPIUploadRoutes{
     };
 
     configure_routes() {
+        mkdirp(process.cwd()+'/documents/files')
+            .then(console.log) //=> '/tmp/foo'
+            .catch(console.error)
 
         this.app.post("/upload-documents", (req, res) => {
             let session_response:upload_types.UploadSessionCreatedResponse;
@@ -97,24 +101,20 @@ export class OpenCDEAPIUploadRoutes{
             let file_name_uuidHash:string;
             file_name_uuidHash= sessionstorage.getItem(sessionId);
 
-
-
             let fstream;
             // @ts-ignore
             req.pipe(req.busboy);
             // @ts-ignore
             req.busboy.on('file', function (fieldname: any, file: { pipe: (arg0: any) => void; }, filename: string) {
                 console.log("Uploading: " + filename);
-
+                console.log("dirname: "+__dirname)
                 //Path where image will be uploaded
-                fstream = fs.createWriteStream(__dirname + '/files/' + filename);
+                fstream = fs.createWriteStream(process.cwd()+'/documents/files/' + file_version_uuidHash);
                 file.pipe(fstream);
                 fstream.on('close', function () {
                     console.log("Upload Finished of " + filename);
-                    res.redirect('back');           //where to go next
                 });
             });
-
 
 
             let document_reference:common_types.DocumentReference;
@@ -133,6 +133,41 @@ export class OpenCDEAPIUploadRoutes{
                         href: "http://"+req.headers.host+"/content/"+file_version_uuidHash
                     }
                 },
+                "version": "string",
+                "version_date": "string",
+                "title": "string",
+                "file_description": {
+                    "size_in_bytes": 0,
+                    "name": "string"
+                }
+            };
+            res.json(document_reference);
+        });
+
+
+        // Upload file
+        this.app.post("/upload-test", (req, res) => {
+
+
+            let fstream;
+            // @ts-ignore
+            req.pipe(req.busboy);
+            // @ts-ignore
+            req.busboy.on('file', function (fieldname: any, file: { pipe: (arg0: any) => void; }, filename: string) {
+                console.log("Uploading: " + filename);
+                console.log("dirname: "+__dirname)
+                //Path where image will be uploaded
+                fstream = fs.createWriteStream(process.cwd()+'/documents/files/' + filename);
+                file.pipe(fstream);
+                fstream.on('close', function () {
+                    console.log("Upload Finished of " + filename);
+                });
+            });
+
+
+
+            let document_reference:any;
+            document_reference={
                 "version": "string",
                 "version_date": "string",
                 "title": "string",
