@@ -10,7 +10,7 @@ const fs = require('fs-extra');       //File System - for file manipulation
 const getUuid = require('uuid-by-string')
 
 let sessionstorage = require('sessionstorage');
-const mkdirp = require('mkdirp-promise')
+const mkdirp = require('mkdirp')
 
 export class OpenCDEAPIUploadRoutes{
     public app: express.Application;
@@ -34,9 +34,7 @@ export class OpenCDEAPIUploadRoutes{
     };
 
     configure_routes() {
-        mkdirp(process.cwd()+'/documents/files')
-            .then(console.log) //=> '/tmp/foo'
-            .catch(console.error)
+        mkdirp.sync(process.cwd()+'/documents/files')
 
         this.app.post("/upload-documents", (req, res) => {
             let session_response:upload_types.UploadSessionCreatedResponse;
@@ -69,6 +67,7 @@ export class OpenCDEAPIUploadRoutes{
             //let documentVersionId=this.uuidv4();
             let sessionId:string;
             sessionId=req.params.session_id;
+            console.log("sessionId: "+sessionId)
 
             let file_request: upload_types.RegisterFileRequest= req.body;
             const file_name_uuidHash = getUuid(file_request.filename)
@@ -78,7 +77,20 @@ export class OpenCDEAPIUploadRoutes{
 
             sessionstorage.setItem(sessionId,file_name_uuidHash);
 
-            this.documents.db.put(file_request)
+
+            let db_file_request:any=
+                {
+                    _id:file_version_uuidHash,
+                    file_request:file_request
+                }
+
+            this.documents.db.put(db_file_request, function(err: any, response: any) {
+                if (err) {
+                    return console.log(err);
+                } else {
+                    console.log("Document created Successfully");
+                }
+            });
             registerfile_response={
                 "_links": {
                     "upload-file": {
@@ -101,47 +113,55 @@ export class OpenCDEAPIUploadRoutes{
             let file_name_uuidHash:string;
             file_name_uuidHash= sessionstorage.getItem(sessionId);
 
-            let fstream;
-            // @ts-ignore
-            req.pipe(req.busboy);
-            // @ts-ignore
-            req.busboy.on('file', function (fieldname: any, file: { pipe: (arg0: any) => void; }, filename: string) {
-                console.log("Uploading: " + filename);
-                console.log("dirname: "+__dirname)
-                //Path where image will be uploaded
-                fstream = fs.createWriteStream(process.cwd()+'/documents/files/' + file_version_uuidHash);
-                file.pipe(fstream);
-                fstream.on('close', function () {
-                    console.log("Upload Finished of " + filename);
+            let db_file_request:any;
+            this.documents.db.get(file_version_uuidHash).then(function (doc:any) {
+                db_file_request=doc;
+                console.log("DB db_file_request 1 " + db_file_request);
+                console.log("DB db_file_request 2 " + db_file_request.file_request.size);
+                let fstream;
+                // @ts-ignore
+                req.pipe(req.busboy);
+                // @ts-ignore
+                req.busboy.on('file', function (fieldname: any, file: { pipe: (arg0: any) => void; }, filename: string) {
+                    console.log("Uploading: " + filename);
+                    //Path where image will be uploaded
+                    fstream = fs.createWriteStream(process.cwd()+'/documents/files/' + file_version_uuidHash);
+                    file.pipe(fstream);
+                    fstream.on('close', function () {
+                        console.log("Upload Finished of " + filename);
+                    });
                 });
-            });
 
 
-            let document_reference:common_types.DocumentReference;
-            document_reference={
-                "_links": {
-                    "self": {
-                        href: "http://"+req.headers.host+"/document_reference/"+file_version_uuidHash
+
+                let document_reference:common_types.DocumentReference;
+                document_reference={
+                    "_links": {
+                        "self": {
+                            href: "http://"+req.headers.host+"/document_reference/"+file_version_uuidHash
+                        },
+                        "metadata": {
+                            href: "http://"+req.headers.host+"/document-version-metadata/"+file_version_uuidHash
+                        },
+                        "versions": {
+                            href: "http://"+req.headers.host+"/document-versions/"+file_name_uuidHash
+                        },
+                        "content": {
+                            href: "http://"+req.headers.host+"/content/"+file_version_uuidHash
+                        }
                     },
-                    "metadata": {
-                        href: "http://"+req.headers.host+"/document-version-metadata/"+file_version_uuidHash
-                    },
-                    "versions": {
-                        href: "http://"+req.headers.host+"/document-versions/"+file_name_uuidHash
-                    },
-                    "content": {
-                        href: "http://"+req.headers.host+"/content/"+file_version_uuidHash
+                    "version": db_file_request.file_request.version,
+                    "version_date": db_file_request.file_request.last_modified,
+                    "title": "string",
+                    "file_description": {
+                        "size_in_bytes": db_file_request.file_request.size,
+                        "name": db_file_request.file_request.filename
                     }
-                },
-                "version": "string",
-                "version_date": "string",
-                "title": "string",
-                "file_description": {
-                    "size_in_bytes": 0,
-                    "name": "string"
-                }
-            };
-            res.json(document_reference);
+                };
+                res.json(document_reference);
+
+            })
+
         });
 
 
@@ -155,7 +175,6 @@ export class OpenCDEAPIUploadRoutes{
             // @ts-ignore
             req.busboy.on('file', function (fieldname: any, file: { pipe: (arg0: any) => void; }, filename: string) {
                 console.log("Uploading: " + filename);
-                console.log("dirname: "+__dirname)
                 //Path where image will be uploaded
                 fstream = fs.createWriteStream(process.cwd()+'/documents/files/' + filename);
                 file.pipe(fstream);

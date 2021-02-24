@@ -109,6 +109,7 @@
           {
             "name": "session_id",
             "in": "path",
+            "default": 1234,
             "description": "Session Id",
             "required": true,
             "type": "string"
@@ -153,6 +154,7 @@
           {
             "name": "session_id",
             "in": "path",
+            "default": 1234,
             "description": "Session Id",
             "required": true,
             "type": "string"
