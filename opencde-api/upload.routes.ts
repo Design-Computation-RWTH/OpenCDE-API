@@ -178,30 +178,51 @@ export class OpenCDEAPIUploadRoutes{
                     }
                 };
                 console.log("Document reference to be saved");
-                let db_document_reference:any=
-                    {
-                        _id:"document_reference:"+file_version_uuidHash,
-                        document_reference:document_reference
-                    }
-                documents.db.put(db_document_reference, function(err: any) {
-                    if (err) {
-                        if (err.name === 'conflict') {
-                            console.log("Document reference version exists already in db");
-                        } else {
-                            console.log("Document reference update error: "+err.name);
-                        }
-                    } else {
-                        console.log("Document reference saved successfully");
-                    }
-                });
 
+                documents.db.get("document_reference:"+file_version_uuidHash).then(function (db_document_reference:any) {
+                    db_document_reference.document_reference=document_reference;
+                    db_document_reference.file_name_uuidHash=file_name_uuidHash;
+                    documents.db.put(db_document_reference, function(err: any) {
+                        if (err) {
+                            if (err.name === 'conflict') {
+                                console.log("Document reference version exists already in db");
+                            } else {
+                                console.log("Document reference update error: "+err.name);
+                            }
+                        } else {
+                            console.log("Document reference saved successfully 1");
+                        }
+
+                }).catch(function () {
+                        console.log("Document reference not saved");
+                })
+                }).catch(function () {
+                    console.log("Document reference exist");
+                        console.log("Document reference rewrite");
+                        let db_document_reference: any =
+                            {
+                                _id: "document_reference:" + file_version_uuidHash,
+                                file_name_uuidHash: file_name_uuidHash,
+                                document_reference: document_reference
+                            }
+                        documents.db.put(db_document_reference, function (err: any) {
+                            if (err) {
+                                if (err.name === 'conflict') {
+                                    console.log("Document reference version exists already in db");
+                                } else {
+                                    console.log("Document reference update error: " + err.name);
+                                }
+                            } else {
+                                console.log("Document reference saved successfully 2");
+                            }
+                        })
+
+                    });
                 console.log("Document reference was:"+ document_reference);
                 res.json(document_reference);
-
             }).catch(function () {
-                // handle any errors
-            });
 
+            });
         });
 
 

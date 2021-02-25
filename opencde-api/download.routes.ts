@@ -60,20 +60,39 @@ export class OpenCDEAPIDownloadRoutes{
         });
 
         this.app.get("/document-versions/:document_id", (req, res) => {
-
-            let document_reference_list:common_types.DocumentReferenceList;
-            document_reference_list={
-                "_links": {
-                    "self": {
-                        href: "http://"+req.headers.host+":3000/link/to/resource"
+            let document_id:string;
+            document_id=req.params.document_id;
+            let documents:Documentbase=this.documents;
+            documents.db.createIndex({
+                index: {fields: ['file_name_uuidHash']}
+            }).then(function () {
+               documents.db.find({
+                    selector: {
+                        file_name_uuidHash: document_id
                     }
-                },
-                "_embedded": {
-                    "documentReferenceList": [
-                    ]
-                }
-            };
-            res.json(document_reference_list);
+                }).then(function (result_list:any)
+                {
+                    let document_reference_list:common_types.DocumentReferenceList;
+                    document_reference_list={
+                        "_links": {
+                            "self": {
+                                href: "http://"+req.headers.host+":3000//cde/0.1/documents/document-versions/"+document_id
+                            }
+                        },
+                        "_embedded": {
+                            "documentReferenceList": [
+                               result_list.docs.map((x:any) => x.document_reference)
+                            ]
+                        }
+                    };
+                    res.json(document_reference_list);
+                });
+
+            }).catch(function () {
+                // handle any errors
+            });
+
+
         });
 
 
