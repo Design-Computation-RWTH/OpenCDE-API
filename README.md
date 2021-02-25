@@ -1,5 +1,5 @@
 # OpenCDE-API
-Version 0.4.1 (https://semver.org/)
+Version 0.5.0 (https://semver.org/)
 
 ## Install the server:
 
