@@ -86,29 +86,6 @@ export class OpenCDEAPIDownloadRoutes{
                 },
                 "_embedded": {
                     "documentReferenceList": [
-                        {
-                            "_links": {
-                                "self": {
-                                    href: "http://"+req.headers.host+"/link/to/resource"
-                                },
-                                "metadata": {
-                                    href: "http://"+req.headers.host+"/link/to/resource"
-                                },
-                                "versions": {
-                                    href: "http://"+req.headers.host+"/link/to/resource"
-                                },
-                                "content": {
-                                    href: "http://"+req.headers.host+"/link/to/resource"
-                                }
-                            },
-                            "version": "string",
-                            "version_date": "string",
-                            "title": "string",
-                            "file_description": {
-                                "size_in_bytes": 0,
-                                "name": "string"
-                            }
-                        }
                     ]
                 }
             };
