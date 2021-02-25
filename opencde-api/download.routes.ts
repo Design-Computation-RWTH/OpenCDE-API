@@ -48,31 +48,15 @@ export class OpenCDEAPIDownloadRoutes{
             let file_version_uuidHash:string;
             file_version_uuidHash=req.params.documentversion_id;
 
-            let document_metadata:common_types.DocumentMetadata;
-            document_metadata={
-                "_links": {
-                    "self": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
-                    },
-                    "documentReference": {
-                        href: "http://"+req.headers.host+"/link/to/resource"
-                    }
-                },
-                "_metaData": [
-                    {
-                        "name": "string",
-                        "value": "string",
-                        "type": {
-                            "type": "string",
-                            "required": true,
-                            "enumValues": [
-                                "string"
-                            ]
-                        }
-                    }
-                ]
-            };
-            res.json(document_metadata);
+
+            this.documents.db.get("document_metadata:"+file_version_uuidHash).then(function (db_document_metadata:any) {
+                let document_metadata:common_types.DocumentReference=db_document_metadata.document_metadata;
+                console.log("Download: DB Document reference  was:"+ document_metadata);
+                console.log("Download: Document reference  was:"+ document_metadata);
+                res.json(document_metadata);
+            }).catch(function () {
+                // handle any errors
+            });
         });
 
         this.app.get("/document-versions/:document_id", (req, res) => {

@@ -248,6 +248,46 @@
             "headers": {}
           }
         }
+      },
+      "post": {
+        "description": "Get document version metadata",
+        "summary": "getDocumentMetadata",
+        "tags": [
+          "Download - Vendor specific URL (discovered via standard API)"
+        ],
+        "operationId": "setDocumentMetadata",
+        "deprecated": false,
+        "produces": [
+          "application/hal+json"
+        ],
+        "parameters": [
+          {
+            "name": "documentversion_id",
+            "in": "path",
+            "description": "Document version Id",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/DocumentMetadata"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The result of the operation",
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            },
+            "headers": {}
+          }
+        }
       }
     },
     "/cde/0.1/documents/document-versions/{document_id}": {

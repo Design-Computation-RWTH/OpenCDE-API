@@ -180,6 +180,31 @@ export class OpenCDEAPIUploadRoutes{
 
         });
 
+
+        this.app.post("/document-version-metadata/:documentversion_id", (req, res) => {
+            let file_version_uuidHash:string;
+            file_version_uuidHash=req.params.documentversion_id;
+
+            let document_metadata:common_types.DocumentMetadata;
+            document_metadata= req.body;
+
+            let db_document_metadata:any=
+                {
+                    _id:"document_metadata:"+file_version_uuidHash,
+                    document_metadata:document_metadata
+                }
+            this.documents.db.put(db_document_metadata, function(err: any, response: any) {
+                if (err) {
+                    //return console.log(err);
+                    console.log("Document metadata version exists already in db");
+                } else {
+                    console.log("Document metadata saved successfully");
+                }
+            });
+
+            res.status(200).send(`Done`);
+        });
+
         return this.app;
     }
 
