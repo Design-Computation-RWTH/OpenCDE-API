@@ -38,7 +38,7 @@ class OpenCDEAPI {
     private configure_routes(): void {
 
         // @ts-ignore
-        this.app.get("/", (req, res, next) => {
+        this.app.get("/", (req, res) => {
             res.send("API Works!!!!!");
         });
 
@@ -51,7 +51,7 @@ class OpenCDEAPI {
         this.app.use('/cde/0.1/documents/content',express.static(process.cwd()+'/documents/files'))
 
         // handle undefined routes
-        this.app.use("*", (req, res, next) => {
+        this.app.use("*", (req, res) => {
             res.send("Make sure url is correct!");
         });
     }

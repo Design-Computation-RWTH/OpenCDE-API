@@ -76,21 +76,43 @@ export class OpenCDEAPIUploadRoutes{
 
 
             sessionstorage.setItem(sessionId,file_name_uuidHash);
+            let documents:Documentbase=this.documents;
+            this.documents.db.get("file_request:"+file_version_uuidHash).then(function (db_file_request:any) {
 
+                // UPDATE
+                db_file_request.file_request=file_request;
 
-            let db_file_request:any=
-                {
-                    _id:"file_request:"+file_version_uuidHash,
-                    file_request:file_request
-                }
+                documents.db.put(db_file_request, function (err: any) {
+                    if (err) {
+                        if (err.name === 'conflict') {
+                            console.log("File reference version exists already in db");
+                        } else {
+                            console.log("File reference update error: " + err.name);
+                        }
+                    } else {
+                        console.log("File reference created Successfully");
+                    }
+                });
+            }).catch(function () {
+                let db_file_request: any =
+                    {
+                        _id: "file_request:" + file_version_uuidHash,
+                        file_request: file_request
+                    }
 
-            this.documents.db.put(db_file_request, function(err: any, response: any) {
-                if (err) {
-                    console.log("File reference version exists already in db");
-                } else {
-                    console.log("Document created Successfully");
-                }
+                documents.db.put(db_file_request, function (err: any) {
+                    if (err) {
+                        if (err.name === 'conflict') {
+                            console.log("File reference version exists already in db");
+                        } else {
+                            console.log("File reference update error: " + err.name);
+                        }
+                    } else {
+                        console.log("File reference created Successfully");
+                    }
+                });
             });
+
             registerfile_response={
                 "_links": {
                     "upload-file": {
@@ -113,7 +135,6 @@ export class OpenCDEAPIUploadRoutes{
             let file_name_uuidHash:string;
             file_name_uuidHash= sessionstorage.getItem(sessionId);
 
-            let db_file_request:any;
             let documents:Documentbase=this.documents;
             this.documents.db.get("file_request:"+file_version_uuidHash).then(function (db_file_request:any) {
                 console.log("DB db_file_request 1 " + db_file_request);
@@ -162,10 +183,13 @@ export class OpenCDEAPIUploadRoutes{
                         _id:"document_reference:"+file_version_uuidHash,
                         document_reference:document_reference
                     }
-                documents.db.put(db_document_reference, function(err: any, response: any) {
+                documents.db.put(db_document_reference, function(err: any) {
                     if (err) {
-                        //return console.log(err);
-                        console.log("Document reference version exists already in db");
+                        if (err.name === 'conflict') {
+                            console.log("Document reference version exists already in db");
+                        } else {
+                            console.log("Document reference update error: "+err.name);
+                        }
                     } else {
                         console.log("Document reference saved successfully");
                     }
@@ -187,19 +211,41 @@ export class OpenCDEAPIUploadRoutes{
 
             let document_metadata:common_types.DocumentMetadata;
             document_metadata= req.body;
+            let documents:Documentbase=this.documents;
+            this.documents.db.get("document_metadata:"+file_version_uuidHash).then(function (db_document_metadata:any) {
 
-            let db_document_metadata:any=
-                {
-                    _id:"document_metadata:"+file_version_uuidHash,
-                    document_metadata:document_metadata
-                }
-            this.documents.db.put(db_document_metadata, function(err: any, response: any) {
-                if (err) {
-                    //return console.log(err);
-                    console.log("Document metadata version exists already in db");
-                } else {
-                    console.log("Document metadata saved successfully");
-                }
+                // UPDATE
+                db_document_metadata.document_metadata=document_metadata;
+
+                documents.db.put(db_document_metadata, function(err: any) {
+                    if (err) {
+                        if (err.name === 'conflict') {
+                            console.log("Document metadata version exists already in db");
+                        } else {
+                            console.log("Document metadata update error: "+err.name);
+                        }
+                    } else {
+                        console.log("Document metadata saved successfully");
+                    }
+                });
+            }).catch(function () {
+                let db_document_metadata:any=
+                    {
+                        _id:"document_metadata:"+file_version_uuidHash,
+                        document_metadata:document_metadata
+                    }
+                documents.db.put(db_document_metadata, function(err: any) {
+                    if (err) {
+                        if (err.name === 'conflict') {
+                            console.log("Document metadata version exists already in db");
+                        } else {
+                            console.log("Document metadata update error: "+err.name);
+                        }
+                    } else {
+                        console.log("Document metadata saved successfully");
+                    }
+                });
+
             });
 
             res.status(200).send(`Done`);
