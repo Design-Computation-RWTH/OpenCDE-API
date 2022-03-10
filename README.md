@@ -1,3 +1,6 @@
+This is based on: https://github.com/buildingSMART/OpenCDE-API
+
+
 # OpenCDE-API
 Version 0.7.0 (https://semver.org/)
 
