@@ -1,5 +1,5 @@
 This is based on: https://github.com/buildingSMART/OpenCDE-API
-
+The standard will be outdated by https://github.com/buildingSMART/documents-API
 
 # OpenCDE-API
 Version 0.7.0 (https://semver.org/)
